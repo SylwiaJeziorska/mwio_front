@@ -2,33 +2,53 @@
   <div class="nav">
     <ul>
       <li>
-        <router-link 
-        :to="{ 
-          path: '/' }">
-          home
-        </router-link>
+        <router-link :to="{ 
+          path: '/' }">home</router-link>
       </li>
-      <li>
-        <router-link 
-        :to="{
-           path: '/signin' }">
-           Singn in
-        </router-link>
-      </li>
-      <li>
-        <router-link 
-        :to="{
-           path: '/dashboard' }">
-           dashboard
-        </router-link>
-      </li>
-      <li>
-        <a href="#"></a>
-      </li>
+
+      <template v-if="authenticated">
+        <li>
+          <router-link :to="{
+           path: '/dashboard' }">dashboard</router-link>
+        </li>
+        <li>{{user.name}}</li>
+        <li @click.prevent="signOut">SignOut</li>
+      </template>
+      <template v-else>
+        <li>
+          <router-link :to="{
+           path: '/signin' }">Singn in</router-link>
+        </li>
+      </template>
     </ul>
   </div>
 </template>
 
 <script>
-export default {};
+import { mapGetters, mapActions } from 'vuex';
+export default {
+  data() {
+    return {
+      test: null,
+    };
+  },
+  computed: {
+    ...mapGetters({
+      authenticated: 'auth/authenticated',
+      user: 'auth/user',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      signOutAction: 'auth/signOut'
+    }),
+    signOut () {
+      this.signOutAction().then(()=>{
+        this.$router.replace({
+          name:'Home'
+        })
+      })
+    }
+  }
+};
 </script>
